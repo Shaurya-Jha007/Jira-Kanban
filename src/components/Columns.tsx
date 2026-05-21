@@ -5,7 +5,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import TaskCard from "./TaskCard";
-import type { ColumnsProps } from "../App";
+import type { ColumnsProps } from "../types/types";
 export default function Columns({
   groupedTasks,
   deleteTask,

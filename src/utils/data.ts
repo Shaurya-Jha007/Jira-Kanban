@@ -6,6 +6,16 @@ export const COLUMNS: Column[] = [
   { id: "DONE", title: "Done" },
 ];
 
+export const STORAGE_KEY = "jira-board-tasks";
+
+export const EMPTY_FORM = {
+  title: "",
+  description: "",
+  priority: "LOW" as Task["priority"],
+  status: "TODO" as Task["status"],
+  assignedBy: "",
+};
+
 export const tasks: Task[] = [
   {
     id: 1,

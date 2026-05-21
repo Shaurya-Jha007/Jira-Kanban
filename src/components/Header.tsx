@@ -1,4 +1,4 @@
-import { type HeaderProps } from "../App";
+import { type HeaderProps } from "../types/types";
 export default function Header({
   assigneeFilter,
   assignees,
