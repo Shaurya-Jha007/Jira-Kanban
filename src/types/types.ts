@@ -17,3 +17,9 @@ export interface TaskCardProps {
   onEdit: (task: Task) => void;
   onDelete: (taskId: number) => void;
 }
+
+export type GroupedTasks = {
+  TODO: Task[];
+  IN_PROGRESS: Task[];
+  DONE: Task[];
+};

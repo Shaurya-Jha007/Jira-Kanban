@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import TaskCard from "./components/TaskCard";
+import Columns from "./components/Columns";
+import type { GroupedTasks } from "./types/types";
 import {
   closestCenter,
   DndContext,
@@ -9,14 +10,11 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 
-import {
-  arrayMove,
-  SortableContext,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { arrayMove } from "@dnd-kit/sortable";
 
-import { COLUMNS, tasks as initialTasks } from "./utils/data";
-import type { Column, Task } from "./types/types";
+import { tasks as initialTasks } from "./utils/data";
+import type { Task } from "./types/types";
+import Header from "./components/Header";
 
 const STORAGE_KEY = "jira-board-tasks";
 
@@ -27,6 +25,30 @@ const EMPTY_FORM = {
   status: "TODO" as Task["status"],
   assignedBy: "",
 };
+
+export interface ColumnsProps {
+  groupedTasks: GroupedTasks;
+
+  openEditModal: (task: Task) => void;
+
+  deleteTask: (taskId: number) => void;
+}
+
+export interface HeaderProps {
+  priorityFilter: "ALL" | Task["priority"];
+
+  setPriorityFilter: React.Dispatch<
+    React.SetStateAction<"ALL" | Task["priority"]>
+  >;
+
+  assigneeFilter: string;
+
+  setAssigneeFilter: React.Dispatch<React.SetStateAction<string>>;
+
+  assignees: string[];
+
+  openCreateModal: () => void;
+}
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>(() => {
@@ -45,7 +67,9 @@ function App() {
 
   const [formData, setFormData] = useState(EMPTY_FORM);
 
-  const [priorityFilter, setPriorityFilter] = useState("ALL");
+  const [priorityFilter, setPriorityFilter] = useState<
+    "ALL" | Task["priority"]
+  >("ALL");
 
   const [assigneeFilter, setAssigneeFilter] = useState("ALL");
 
@@ -202,116 +226,30 @@ function App() {
 
   return (
     <main className="min-h-screen bg-[#0b1120] text-white">
-      {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-[#111827]/95 backdrop-blur">
-        <div className="mx-auto flex max-w-400 flex-col gap-4 px-6 py-5 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">
-              Jira Kanban Board
-            </h1>
+      <Header
+        priorityFilter={priorityFilter}
+        setPriorityFilter={setPriorityFilter}
+        assigneeFilter={assigneeFilter}
+        setAssigneeFilter={setAssigneeFilter}
+        assignees={assignees}
+        openCreateModal={openCreateModal}
+      />
 
-            <p className="mt-1 text-sm text-slate-400">
-              Drag, manage and organize your workflow.
-            </p>
-          </div>
-
-          <div className="flex flex-col gap-3 md:flex-row">
-            {/* Priority Filter */}
-            <select
-              value={priorityFilter}
-              onChange={(e) => setPriorityFilter(e.target.value)}
-              className="rounded-xl border border-white/10 bg-[#1e293b] px-4 py-3 text-sm outline-none transition focus:border-blue-500"
-            >
-              <option value="ALL">All Priorities</option>
-              <option value="LOW">LOW</option>
-              <option value="MEDIUM">MEDIUM</option>
-              <option value="HIGH">HIGH</option>
-            </select>
-
-            {/* Assignee Filter */}
-            <select
-              value={assigneeFilter}
-              onChange={(e) => setAssigneeFilter(e.target.value)}
-              className="rounded-xl border border-white/10 bg-[#1e293b] px-4 py-3 text-sm outline-none transition focus:border-blue-500"
-            >
-              <option value="ALL">All Assignees</option>
-
-              {assignees.map((assignee) => (
-                <option key={assignee} value={assignee}>
-                  {assignee}
-                </option>
-              ))}
-            </select>
-
-            {/* Add Task */}
-            <button
-              onClick={openCreateModal}
-              className="rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold transition-all duration-300 hover:bg-blue-500"
-            >
-              + Create Task
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* Board */}
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}
       >
-        <section className="mx-auto grid max-w-[1600px] grid-cols-1 gap-6 p-6 lg:grid-cols-3">
-          {COLUMNS.map((column: Column) => {
-            const columnTasks =
-              groupedTasks[column.id as keyof typeof groupedTasks];
-
-            return (
-              <div
-                key={column.id}
-                className="flex h-[82vh] flex-col rounded-2xl border border-white/10 bg-[#111827]"
-              >
-                {/* Column Header */}
-                <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
-                  <div>
-                    <h2 className="text-lg font-semibold">{column.title}</h2>
-
-                    <p className="text-sm text-slate-400">
-                      {columnTasks.length} Tasks
-                    </p>
-                  </div>
-
-                  <div className="rounded-full bg-slate-800 px-3 py-1 text-xs text-slate-300">
-                    {column.id}
-                  </div>
-                </div>
-
-                {/* Tasks */}
-                <div className="flex-1 overflow-y-auto p-4">
-                  <SortableContext
-                    items={columnTasks.map((task) => task.id)}
-                    strategy={verticalListSortingStrategy}
-                  >
-                    <div className="space-y-4">
-                      {columnTasks.map((task) => (
-                        <TaskCard
-                          key={task.id}
-                          task={task}
-                          onEdit={openEditModal}
-                          onDelete={deleteTask}
-                        />
-                      ))}
-                    </div>
-                  </SortableContext>
-                </div>
-              </div>
-            );
-          })}
-        </section>
+        <Columns
+          groupedTasks={groupedTasks}
+          openEditModal={openEditModal}
+          deleteTask={deleteTask}
+        />
       </DndContext>
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 px-4 backdrop-blur-sm">
+        <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/70 px-4 backdrop-blur-sm">
           <div className="w-full max-w-xl rounded-3xl border border-white/10 bg-[#111827] p-6 shadow-2xl">
             <div className="flex items-center justify-between">
               <div>
