@@ -21,7 +21,6 @@ export default function Header({
         </div>
 
         <div className="flex flex-col gap-3 md:flex-row">
-          {/* Priority Filter */}
           <select
             value={priorityFilter}
             onChange={(e) => setPriorityFilter(e.target.value)}
@@ -33,7 +32,6 @@ export default function Header({
             <option value="HIGH">HIGH</option>
           </select>
 
-          {/* Assignee Filter */}
           <select
             value={assigneeFilter}
             onChange={(e) => setAssigneeFilter(e.target.value)}
@@ -48,7 +46,6 @@ export default function Header({
             ))}
           </select>
 
-          {/* Add Task */}
           <button
             onClick={openCreateModal}
             className="rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold transition-all duration-300 hover:bg-blue-500"

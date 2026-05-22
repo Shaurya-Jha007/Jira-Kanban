@@ -37,7 +37,6 @@ export default function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
           : "hover:border-blue-500/40 hover:bg-[#243244]"
       }`}
     >
-      {/* Header */}
       <div className="flex items-start justify-between gap-3">
         <h3 className="text-base font-semibold leading-6">{task.title}</h3>
 
@@ -50,12 +49,10 @@ export default function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
         </span>
       </div>
 
-      {/* Description */}
       <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-300">
         {task.description}
       </p>
 
-      {/* Footer */}
       <div className="mt-5 flex items-center justify-between">
         <div>
           <p className="text-xs text-slate-500">Assigned By</p>

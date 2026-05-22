@@ -1,11 +1,14 @@
 import { type Column } from "../types/types";
 import { COLUMNS } from "../utils/data";
+
 import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+
 import TaskCard from "./TaskCard";
 import type { ColumnsProps } from "../types/types";
+
 export default function Columns({
   groupedTasks,
   deleteTask,
@@ -22,7 +25,6 @@ export default function Columns({
             key={column.id}
             className="flex h-[82vh] flex-col rounded-2xl border border-white/10 bg-[#111827]"
           >
-            {/* Column Header */}
             <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
               <div>
                 <h2 className="text-lg font-semibold">{column.title}</h2>
@@ -37,7 +39,6 @@ export default function Columns({
               </div>
             </div>
 
-            {/* Tasks */}
             <div className="flex-1 overflow-y-auto p-4">
               <SortableContext
                 items={columnTasks.map((task) => task.id)}
